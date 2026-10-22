@@ -1,0 +1,1488 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Практическая работа «Поиск информации в Интернете» — 5 класс</title>
+<style>
+/* ============ БАЗА ============ */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+html { height: 100%; }
+body {
+  font-family: "Segoe UI", "Trebuchet MS", system-ui, -apple-system, sans-serif;
+  background: linear-gradient(135deg, #eef4ff 0%, #f8fbff 45%, #edfbf4 100%);
+  background-attachment: fixed;
+  color: #1f2a44;
+  font-size: 17px;
+  line-height: 1.5;
+  min-height: 100vh;
+  padding: 22px 16px 40px;
+}
+.screen { display: none; width: 100%; max-width: 1000px; margin: 0 auto; }
+.screen.active { display: block; animation: fadeIn .35s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+/* ============ ЭКРАН ВХОДА ============ */
+.login-card {
+  background: #ffffff;
+  border-radius: 28px;
+  padding: 38px 44px 44px;
+  box-shadow: 0 20px 55px rgba(47, 111, 237, .13);
+  border: 1px solid #e4ecff;
+  max-width: 760px;
+  margin: 3vh auto 0;
+  text-align: center;
+}
+.logo-line { font-size: 44px; letter-spacing: 6px; margin-bottom: 10px; }
+.login-card h1 {
+  font-size: 28px;
+  line-height: 1.28;
+  color: #17325e;
+  margin-bottom: 8px;
+}
+.subtitle {
+  font-size: 16px;
+  color: #5b7099;
+  font-weight: 600;
+  margin-bottom: 22px;
+}
+.info-list {
+  list-style: none;
+  text-align: left;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 8px;
+  margin: 0 0 26px;
+  background: #f6f9ff;
+  border: 1px solid #e2ecff;
+  border-radius: 18px;
+  padding: 18px 22px;
+}
+.info-list li {
+  font-size: 15.5px;
+  color: #2f4470;
+  padding-left: 4px;
+}
+.login-label {
+  display: block;
+  font-size: 18px;
+  font-weight: 700;
+  color: #17325e;
+  margin-bottom: 12px;
+}
+#studentName {
+  width: 100%;
+  padding: 17px 20px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #14532d;
+  border-radius: 16px;
+  border: 3px solid #22c55e;
+  background: #eafff2;
+  outline: none;
+  font-family: inherit;
+  transition: box-shadow .2s, background .2s;
+}
+#studentName:focus {
+  background: #e1ffec;
+  box-shadow: 0 0 0 7px rgba(34, 197, 94, .18);
+}
+.login-hint {
+  font-size: 14.5px;
+  color: #7d8aa5;
+  margin-top: 10px;
+  font-weight: 600;
+}
+.primary-btn {
+  background: linear-gradient(135deg, #2f6fed, #4f9bff);
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  padding: 17px 34px;
+  font-size: 19px;
+  font-weight: 800;
+  font-family: inherit;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(47, 111, 237, .32);
+  transition: transform .15s, box-shadow .15s, background .2s;
+  margin-top: 22px;
+}
+.primary-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(47,111,237,.4); }
+.primary-btn:active:not(:disabled) { transform: translateY(0); }
+.primary-btn:disabled {
+  background: #ccd8ee;
+  color: #7f8dab;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* ============ ШАПКА ТЕСТА ============ */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-weight: 800;
+  font-size: 16px;
+  color: #17325e;
+  margin-bottom: 4px;
+}
+.brand { font-size: 16.5px; }
+.stage-badge {
+  background: #e6f0ff;
+  color: #2f6fed;
+  border: 1.5px solid #c5dbff;
+  border-radius: 999px;
+  padding: 6px 16px;
+  font-size: 14.5px;
+}
+.counter { color: #5b7099; font-size: 15px; }
+.progress {
+  height: 12px;
+  background: #e3ecfb;
+  border-radius: 99px;
+  overflow: hidden;
+  margin: 12px 0 20px;
+}
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #2f6fed, #4fd1c5);
+  border-radius: 99px;
+  transition: width .35s ease;
+}
+
+/* ============ КАРТОЧКА ЗАДАНИЯ ============ */
+.task-card {
+  background: #fff;
+  border-radius: 26px;
+  padding: 28px 34px 30px;
+  box-shadow: 0 16px 46px rgba(31, 42, 68, .10);
+  border: 1px solid #e8effb;
+}
+.task-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.task-num {
+  font-size: 15px;
+  font-weight: 800;
+  color: #2f6fed;
+  background: #eaf2ff;
+  border-radius: 999px;
+  padding: 6px 16px;
+}
+.task-type {
+  font-size: 14px;
+  font-weight: 700;
+  color: #7a8bab;
+  background: #f4f7fd;
+  border-radius: 999px;
+  padding: 6px 16px;
+}
+.task-q {
+  font-size: 21px;
+  line-height: 1.42;
+  font-weight: 700;
+  color: #17325e;
+  margin-bottom: 20px;
+}
+.task-body { margin-bottom: 6px; }
+
+/* ---- варианты ответа ---- */
+.options { display: flex; flex-direction: column; gap: 12px; }
+.option {
+  text-align: left;
+  background: #f6f9ff;
+  border: 2px solid #dbe6ff;
+  border-radius: 16px;
+  padding: 16px 20px;
+  font-size: 17.5px;
+  font-weight: 600;
+  font-family: inherit;
+  color: #1f2a44;
+  cursor: pointer;
+  transition: .15s;
+  line-height: 1.4;
+}
+.option:hover { border-color: #8fb4ff; background: #eef4ff; }
+.option.selected {
+  border-color: #2f6fed;
+  background: #e3edff;
+  box-shadow: 0 0 0 5px rgba(47, 111, 237, .12);
+  color: #17325e;
+}
+.tf-options { flex-direction: row; gap: 16px; }
+.tf-options .option { flex: 1; text-align: center; font-size: 19px; padding: 20px 14px; }
+
+/* ---- сопоставление ---- */
+.match-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.match-left {
+  background: #f6f9ff;
+  border: 2px solid #e1eaff;
+  border-radius: 14px;
+  padding: 14px 18px;
+  font-weight: 700;
+  font-size: 16.5px;
+  color: #22375f;
+}
+.match-select {
+  width: 100%;
+  padding: 14px 12px;
+  border-radius: 14px;
+  border: 2px solid #dbe6ff;
+  background: #fff;
+  font-size: 16px;
+  font-family: inherit;
+  font-weight: 600;
+  color: #1f2a44;
+  cursor: pointer;
+  outline: none;
+  transition: .15s;
+}
+.match-select:focus { border-color: #2f6fed; box-shadow: 0 0 0 4px rgba(47,111,237,.13); }
+
+/* ---- перетаскивание ---- */
+.drag-caption {
+  font-size: 14.5px;
+  color: #7a8bab;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.drag-pool {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  min-height: 76px;
+  padding: 14px;
+  background: #f5f8ff;
+  border: 2px dashed #b9cdf5;
+  border-radius: 18px;
+  margin-bottom: 18px;
+  align-content: flex-start;
+}
+.drag-card {
+  background: #fff;
+  border: 2px solid #cfe0ff;
+  border-radius: 14px;
+  padding: 12px 16px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #22375f;
+  cursor: grab;
+  box-shadow: 0 3px 10px rgba(47, 111, 237, .10);
+  transition: .15s;
+}
+.drag-card:hover { border-color: #8fb4ff; }
+.drag-card.sel {
+  border-color: #2f6fed;
+  background: #e3edff;
+  box-shadow: 0 0 0 5px rgba(47, 111, 237, .15);
+  transform: translateY(-2px);
+}
+.drag-card.dragging { opacity: .4; }
+.buckets {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+.bucket {
+  background: #fbfdff;
+  border: 2px solid #e1eaff;
+  border-radius: 18px;
+  padding: 12px;
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+  transition: .15s;
+}
+.bucket.over { border-color: #2f6fed; background: #eef4ff; }
+.bucket-title {
+  font-weight: 800;
+  font-size: 15.5px;
+  text-align: center;
+  color: #2f6fed;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1.5px dashed #dbe6ff;
+}
+.bucket-items { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.bucket-items .drag-card { font-size: 14.5px; padding: 10px 12px; }
+
+/* ---- навигация ---- */
+.nav-actions {
+  margin-top: 26px;
+  display: flex;
+  justify-content: flex-end;
+}
+.nav-actions .primary-btn { margin-top: 0; }
+
+/* ============ ЭКРАН ПЕРЕХОДА ============ */
+.stage-card {
+  background: #fff;
+  border-radius: 28px;
+  padding: 50px 44px;
+  text-align: center;
+  box-shadow: 0 20px 55px rgba(47, 111, 237, .13);
+  border: 1px solid #e4ecff;
+  max-width: 720px;
+  margin: 6vh auto 0;
+}
+.big-icon { font-size: 62px; margin-bottom: 14px; }
+.stage-card h2 { font-size: 28px; color: #17325e; margin-bottom: 14px; }
+.stage-card p { font-size: 17px; color: #48597c; margin-bottom: 10px; }
+
+/* ============ РЕЗУЛЬТАТЫ ============ */
+.result-card {
+  background: #fff;
+  border-radius: 28px;
+  padding: 40px 44px 44px;
+  box-shadow: 0 20px 55px rgba(47, 111, 237, .13);
+  border: 1px solid #e4ecff;
+  max-width: 960px;
+  margin: 2vh auto 0;
+  text-align: center;
+}
+.result-name {
+  font-size: 30px;
+  font-weight: 800;
+  color: #17325e;
+  margin-bottom: 6px;
+  word-break: break-word;
+}
+.result-sub { font-size: 16px; color: #7a8bab; font-weight: 700; margin-bottom: 24px; }
+.score-big {
+  font-size: 64px;
+  font-weight: 900;
+  line-height: 1;
+  background: linear-gradient(135deg, #2f6fed, #4fd1c5);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 6px;
+}
+.score-big small { font-size: 22px; color: #7a8bab; -webkit-text-fill-color: #7a8bab; font-weight: 800; }
+.percent-line {
+  display: inline-block;
+  background: #eaf2ff;
+  color: #2f6fed;
+  border-radius: 999px;
+  padding: 9px 22px;
+  font-weight: 800;
+  font-size: 16.5px;
+  margin-bottom: 8px;
+}
+.points-note { font-size: 14px; color: #93a1bb; font-weight: 600; margin-bottom: 30px; }
+.section-title {
+  text-align: left;
+  font-size: 19px;
+  font-weight: 800;
+  color: #17325e;
+  margin: 0 0 14px;
+}
+.desc-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 15.5px;
+  overflow: hidden;
+  border-radius: 18px;
+  border: 1px solid #e4ecff;
+}
+.desc-table th {
+  background: #eef4ff;
+  color: #2f6fed;
+  font-weight: 800;
+  padding: 14px 16px;
+  text-align: left;
+  font-size: 14.5px;
+}
+.desc-table td {
+  padding: 14px 16px;
+  border-top: 1px solid #eef2fa;
+  text-align: left;
+  color: #2b3a5c;
+  font-weight: 600;
+}
+.desc-table tr:nth-child(even) td { background: #fafcff; }
+.desc-table td.num { text-align: center; font-weight: 800; white-space: nowrap; }
+.lvl {
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: 999px;
+  font-size: 13.5px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.lvl-high { background: #dcfce7; color: #15803d; }
+.lvl-mid { background: #fef3c7; color: #a16207; }
+.lvl-low { background: #fee2e2; color: #b91c1c; }
+.verdict {
+  margin: 26px 0 4px;
+  font-size: 17px;
+  font-weight: 700;
+  color: #2f4470;
+  background: #f6f9ff;
+  border-radius: 16px;
+  padding: 16px 22px;
+  border: 1px solid #e2ecff;
+}
+
+/* ============ АДАПТИВ ============ */
+@media (max-width: 760px) {
+  body { font-size: 16px; padding: 14px 10px 30px; }
+  .login-card, .result-card, .stage-card, .task-card { padding: 24px 20px; border-radius: 22px; }
+  .login-card h1 { font-size: 22px; }
+  .task-q { font-size: 18.5px; }
+  .match-row { grid-template-columns: 1fr; gap: 8px; }
+  .tf-options { flex-direction: column; }
+  .score-big { font-size: 48px; }
+  .desc-table { font-size: 14px; }
+  .desc-table th, .desc-table td { padding: 10px 10px; }
+}
+@media (min-height: 900px) and (min-width: 1400px) {
+  body { font-size: 18px; }
+  .task-q { font-size: 23px; }
+  .option { font-size: 18.5px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== ЭКРАН 1: ВХОД ==================== -->
+<section id="loginScreen" class="screen active">
+  <div class="login-card">
+    <div class="logo-line">💻 🔍 🌐</div>
+    <h1>Практическая работа<br>«Поиск информации в Интернете»</h1>
+    <p class="subtitle">Информатика · 5 класс · 1 четверть</p>
+
+    <ul class="info-list">
+      <li>🛡️ 5.4.1.1 — Эргономика и правильная посадка за ПК</li>
+      <li>🧠 5.2.1.1 — Виды информации и двоичный код</li>
+      <li>🔍 5.3.3.1 — Поисковые запросы в Интернете</li>
+      <li>📁 5.1.1.1 — История развития вычислительной техники</li>
+      <li>🤖 5.1.1.2 — Классификация ПО и искусственный интеллект</li>
+    </ul>
+
+    <label class="login-label" for="studentName">✏️ Введи своё имя и фамилию</label>
+    <input type="text" id="studentName" autocomplete="off" autocorrect="off" spellcheck="false">
+    <p class="login-hint" id="loginHint">Без имени работа не начнётся</p>
+
+    <button id="startBtn" class="primary-btn" disabled>🚀 Начать практическую работу</button>
+  </div>
+</section>
+
+<!-- ==================== ЭКРАН 2: ТЕСТ ==================== -->
+<section id="quizScreen" class="screen">
+  <div class="topbar">
+    <div class="brand">🧠 Информатика · 5 класс</div>
+    <div class="stage-badge" id="stageBadge">ЭТАП 1 · Базовый 🌱</div>
+    <div class="counter" id="counter">Задание 1 из 50</div>
+  </div>
+  <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+
+  <div class="task-card">
+    <div class="task-head">
+      <span class="task-num" id="taskNum">Задание 1</span>
+      <span class="task-type" id="taskType">Один из многих</span>
+    </div>
+    <h2 class="task-q" id="taskQuestion"></h2>
+    <div class="task-body" id="taskBody"></div>
+
+    <div class="nav-actions">
+      <button class="primary-btn" id="nextBtn" type="button" disabled>Далее →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== ЭКРАН 3: ПЕРЕХОД МЕЖДУ ЭТАПАМИ ==================== -->
+<section id="stageScreen" class="screen">
+  <div class="stage-card">
+    <div class="big-icon">✅</div>
+    <h2>Этап 1 завершён!</h2>
+    <p>Ты ответил на все 35 заданий базового уровня.</p>
+    <p>Впереди <b>15 заданий продвинутого уровня</b>: перетаскивание карточек в группы, классификация программ и точные поисковые запросы.</p>
+    <button id="toStage2Btn" class="primary-btn">Перейти ко 2 этапу 🚀</button>
+  </div>
+</section>
+
+<!-- ==================== ЭКРАН 4: РЕЗУЛЬТАТЫ ==================== -->
+<section id="resultScreen" class="screen">
+  <div class="result-card">
+    <div class="big-icon">🏆</div>
+    <div class="result-name" id="resName"></div>
+    <div class="result-sub">Практическая работа «Поиск информации в Интернете»</div>
+
+    <div class="score-big"><span id="resScore">0</span> <small>/ 10 баллов</small></div>
+    <div class="percent-line" id="resPercent">Правильных ответов: 0%</div>
+    <div class="points-note" id="resCount"></div>
+
+    <h3 class="section-title">📊 Дескрипторы оценивания по целям обучения</h3>
+    <table class="desc-table">
+      <thead>
+        <tr>
+          <th>Цель обучения</th>
+          <th style="text-align:center">Верно</th>
+          <th style="text-align:center">Процент</th>
+          <th style="text-align:center">Уровень</th>
+        </tr>
+      </thead>
+      <tbody id="descBody"></tbody>
+    </table>
+
+    <div class="verdict" id="verdict"></div>
+
+    <button id="restartBtn" class="primary-btn">🔄 Пройти заново</button>
+  </div>
+</section>
+
+<script>
+"use strict";
+
+/* =========================================================
+   ЗАЩИТА ОТ СПИСЫВАНИЯ
+   ========================================================= */
+document.addEventListener('contextmenu', e => e.preventDefault());
+
+document.addEventListener('keydown', function (e) {
+  const k = (e.key || '').toLowerCase();
+  if (e.key === 'F12' || e.code === 'F12') { e.preventDefault(); return false; }
+  if (e.key === 'PrintScreen' || e.code === 'PrintScreen') { e.preventDefault(); return false; }
+  if (e.ctrlKey || e.metaKey) {
+    if (['c', 'a', 'p', 's', 'u'].indexOf(k) !== -1) { e.preventDefault(); return false; }
+    if (e.shiftKey && ['i', 'j', 'c'].indexOf(k) !== -1) { e.preventDefault(); return false; }
+  }
+});
+document.addEventListener('copy', e => e.preventDefault());
+document.addEventListener('cut', e => e.preventDefault());
+document.addEventListener('dragstart', function (e) {
+  if (!e.target.classList || !e.target.classList.contains('drag-card')) e.preventDefault();
+}, false);
+
+/* =========================================================
+   БАЗА ЗАДАНИЙ — 50 ЗАДАНИЙ, 2 ЭТАПА, 5 ЦЕЛЕЙ ОБУЧЕНИЯ
+   ========================================================= */
+const TASKS = [
+  /* ---------- ЭТАП 1 · ЦЕЛЬ 1: Эргономика (1–7) ---------- */
+  {
+    id: 1, stage: 1, obj: 1, type: 'single',
+    q: 'Как правильно сидеть за компьютером?',
+    options: [
+      'Спина прямая, ноги стоят на полу, экран на уровне глаз',
+      'Лёжа на диване, положив ноутбук на колени',
+      'Ссутулившись и поджав ноги под стул',
+      'Откинувшись назад так, чтобы экран был сбоку'
+    ],
+    answer: 'Спина прямая, ноги стоят на полу, экран на уровне глаз'
+  },
+  {
+    id: 2, stage: 1, obj: 1, type: 'tf',
+    q: 'Расстояние от глаз до экрана монитора должно быть примерно 50–70 сантиметров.',
+    answer: 'Верно'
+  },
+  {
+    id: 3, stage: 1, obj: 1, type: 'single',
+    q: 'Сколько времени пятикласснику можно работать за компьютером без перерыва?',
+    options: ['15–20 минут', '3 часа', 'Пока не надоест', 'Весь день без отдыха'],
+    answer: '15–20 минут'
+  },
+  {
+    id: 4, stage: 1, obj: 1, type: 'tf',
+    q: 'Свет от окна должен падать прямо на экран монитора.',
+    answer: 'Неверно'
+  },
+  {
+    id: 5, stage: 1, obj: 1, type: 'single',
+    q: 'Что нужно сделать перед началом работы за компьютером?',
+    options: [
+      'Проверить чистоту рук и порядок на рабочем месте',
+      'Поставить стакан с соком рядом с клавиатурой',
+      'Съесть бутерброд прямо над мышкой',
+      'Разбросать провода по всему столу'
+    ],
+    answer: 'Проверить чистоту рук и порядок на рабочем месте'
+  },
+  {
+    id: 6, stage: 1, obj: 1, type: 'match',
+    q: 'Соотнеси правило работы за компьютером и то, для чего оно нужно.',
+    pairs: [
+      { l: 'Спина прямая', r: 'Чтобы не болела спина' },
+      { l: 'Ноги стоят на полу', r: 'Чтобы не уставали ноги' },
+      { l: 'Перерыв каждые 20 минут', r: 'Чтобы отдыхали глаза' },
+      { l: 'Расстояние до экрана 50–70 см', r: 'Чтобы не портить зрение' }
+    ]
+  },
+  {
+    id: 7, stage: 1, obj: 1, type: 'single',
+    q: 'Что запрещено делать в компьютерном классе?',
+    options: [
+      'Приносить еду и напитки к компьютеру',
+      'Делать гимнастику для глаз',
+      'Сидеть ровно на стуле',
+      'Выполнять задания учителя'
+    ],
+    answer: 'Приносить еду и напитки к компьютеру'
+  },
+
+  /* ---------- ЭТАП 1 · ЦЕЛЬ 2: Виды информации и двоичный код (8–14) ---------- */
+  {
+    id: 8, stage: 1, obj: 2, type: 'single',
+    q: 'Укажи пример текстовой информации.',
+    options: ['Стихотворение в учебнике', 'Фотография кота', 'Звонок будильника', 'Мелодия песни'],
+    answer: 'Стихотворение в учебнике'
+  },
+  {
+    id: 9, stage: 1, obj: 2, type: 'single',
+    q: 'Укажи пример числовой информации.',
+    options: [
+      'Количество учеников в классе — 25',
+      'Сказка о рыбаке и рыбке',
+      'Фотография заката',
+      'Мелодия звонка'
+    ],
+    answer: 'Количество учеников в классе — 25'
+  },
+  {
+    id: 10, stage: 1, obj: 2, type: 'tf',
+    q: 'Мультфильм — это пример видеоинформации.',
+    answer: 'Верно'
+  },
+  {
+    id: 11, stage: 1, obj: 2, type: 'single',
+    q: 'Сколько цифр используется в двоичном коде?',
+    options: ['2', '10', '1', '8'],
+    answer: '2'
+  },
+  {
+    id: 12, stage: 1, obj: 2, type: 'match',
+    q: 'Соотнеси вид информации и её пример.',
+    pairs: [
+      { l: 'Текстовая', r: 'Рассказ в книге' },
+      { l: 'Числовая', r: 'Пример 25 + 17' },
+      { l: 'Графическая', r: 'Рисунок в Paint' },
+      { l: 'Звуковая', r: 'Песня в наушниках' }
+    ]
+  },
+  {
+    id: 13, stage: 1, obj: 2, type: 'tf',
+    q: 'Компьютер хранит и обрабатывает информацию в двоичном коде.',
+    answer: 'Верно'
+  },
+  {
+    id: 14, stage: 1, obj: 2, type: 'single',
+    q: 'Переведи двоичное число 101 в десятичную систему.',
+    options: ['5', '3', '7', '101'],
+    answer: '5'
+  },
+
+  /* ---------- ЭТАП 1 · ЦЕЛЬ 3: Поисковые запросы (15–21) ---------- */
+  {
+    id: 15, stage: 1, obj: 3, type: 'single',
+    q: 'Что нужно ввести в поисковую строку, чтобы найти нужную информацию?',
+    options: ['Ключевые слова по теме', 'Своё имя и фамилию', 'Случайные буквы', 'Номер телефона'],
+    answer: 'Ключевые слова по теме'
+  },
+  {
+    id: 16, stage: 1, obj: 3, type: 'tf',
+    q: 'Точный поисковый запрос помогает быстрее найти нужную информацию.',
+    answer: 'Верно'
+  },
+  {
+    id: 17, stage: 1, obj: 3, type: 'single',
+    q: 'Какой запрос лучше всего подойдёт, чтобы найти интересные факты о планете Марс для урока?',
+    options: [
+      'планета Марс интересные факты для школьников',
+      'Марс',
+      'смешные видео про марсиан',
+      'космос'
+    ],
+    answer: 'планета Марс интересные факты для школьников'
+  },
+  {
+    id: 18, stage: 1, obj: 3, type: 'single',
+    q: 'Поиск выдал слишком много лишних результатов. Что нужно сделать?',
+    options: [
+      'Добавить в запрос уточняющие слова',
+      'Закрыть браузер и не искать',
+      'Открыть все ссылки подряд',
+      'Нажать кнопку выключения компьютера'
+    ],
+    answer: 'Добавить в запрос уточняющие слова'
+  },
+  {
+    id: 19, stage: 1, obj: 3, type: 'tf',
+    q: 'Кавычки в поисковом запросе помогают найти точную фразу.',
+    answer: 'Верно'
+  },
+  {
+    id: 20, stage: 1, obj: 3, type: 'match',
+    q: 'Соотнеси задачу и лучший поисковый запрос.',
+    pairs: [
+      { l: 'Узнать погоду в Алматы на завтра', r: 'погода Алматы завтра' },
+      { l: 'Найти стихи Пушкина о зиме', r: 'Пушкин стихи о зиме' },
+      { l: 'Узнать, как ухаживать за котёнком', r: 'уход за котёнком советы' },
+      { l: 'Найти рецепт блинов', r: 'рецепт блинов пошагово' }
+    ]
+  },
+  {
+    id: 21, stage: 1, obj: 3, type: 'single',
+    q: 'Что нужно проверить, прежде чем использовать найденную в Интернете информацию?',
+    options: [
+      'Надёжность источника и сравнить с другими сайтами',
+      'Количество картинок на сайте',
+      'Цвет фона страницы',
+      'Скорость интернета'
+    ],
+    answer: 'Надёжность источника и сравнить с другими сайтами'
+  },
+
+  /* ---------- ЭТАП 1 · ЦЕЛЬ 4: История вычислительной техники (22–28) ---------- */
+  {
+    id: 22, stage: 1, obj: 4, type: 'single',
+    q: 'Какой прибор считается одним из первых счётных устройств?',
+    options: ['Абак (счёты)', 'Ноутбук', 'Смартфон', 'Принтер'],
+    answer: 'Абак (счёты)'
+  },
+  {
+    id: 23, stage: 1, obj: 4, type: 'tf',
+    q: 'Первые компьютеры были размером с целую комнату.',
+    answer: 'Верно'
+  },
+  {
+    id: 24, stage: 1, obj: 4, type: 'single',
+    q: 'Кого считают первым программистом?',
+    options: ['Аду Лавлейс', 'Билла Гейтса', 'Стива Джобса', 'Марка Цукерберга'],
+    answer: 'Аду Лавлейс'
+  },
+  {
+    id: 25, stage: 1, obj: 4, type: 'single',
+    q: 'Как называлась первая электронная вычислительная машина?',
+    options: ['ENIAC', 'Windows', 'Pentium', 'Internet'],
+    answer: 'ENIAC'
+  },
+  {
+    id: 26, stage: 1, obj: 4, type: 'match',
+    q: 'Соотнеси изобретение и его значение.',
+    pairs: [
+      { l: 'Абак', r: 'Древние счёты' },
+      { l: 'Машина Бэббиджа', r: 'Первая механическая вычислительная машина' },
+      { l: 'ENIAC', r: 'Первый электронный компьютер' },
+      { l: 'Персональный компьютер', r: 'Компьютер для одного человека' }
+    ]
+  },
+  {
+    id: 27, stage: 1, obj: 4, type: 'tf',
+    q: 'Современный смартфон мощнее первых больших компьютеров.',
+    answer: 'Верно'
+  },
+  {
+    id: 28, stage: 1, obj: 4, type: 'single',
+    q: 'Что из перечисленного появилось позже всего?',
+    options: ['Смартфон', 'Абак', 'Первая ЭВМ', 'Механическая счётная машина'],
+    answer: 'Смартфон'
+  },
+
+  /* ---------- ЭТАП 1 · ЦЕЛЬ 5: Классификация ПО и ИИ (29–35) ---------- */
+  {
+    id: 29, stage: 1, obj: 5, type: 'single',
+    q: 'Что такое программное обеспечение (ПО)?',
+    options: [
+      'Набор программ, которые управляют работой компьютера',
+      'Клавиатура, мышь и монитор',
+      'Только компьютерные игры',
+      'Провода и розетки'
+    ],
+    answer: 'Набор программ, которые управляют работой компьютера'
+  },
+  {
+    id: 30, stage: 1, obj: 5, type: 'single',
+    q: 'Какая программа относится к системному ПО?',
+    options: [
+      'Операционная система Windows',
+      'Графический редактор Paint',
+      'Игра Minecraft',
+      'Текстовый редактор Word'
+    ],
+    answer: 'Операционная система Windows'
+  },
+  {
+    id: 31, stage: 1, obj: 5, type: 'single',
+    q: 'Какая программа относится к прикладному ПО?',
+    options: ['Текстовый редактор Word', 'Операционная система Windows', 'Драйвер видеокарты', 'BIOS'],
+    answer: 'Текстовый редактор Word'
+  },
+  {
+    id: 32, stage: 1, obj: 5, type: 'tf',
+    q: 'Инструментальное ПО нужно для создания новых программ.',
+    answer: 'Верно'
+  },
+  {
+    id: 33, stage: 1, obj: 5, type: 'single',
+    q: 'Что из перечисленного использует искусственный интеллект?',
+    options: [
+      'Голосовой помощник, который понимает вопросы',
+      'Обычный калькулятор',
+      'Настольная лампа',
+      'Бумажный блокнот'
+    ],
+    answer: 'Голосовой помощник, который понимает вопросы'
+  },
+  {
+    id: 34, stage: 1, obj: 5, type: 'match',
+    q: 'Соотнеси программу и вид программного обеспечения.',
+    pairs: [
+      { l: 'Windows', r: 'Системное ПО' },
+      { l: 'Word', r: 'Прикладное ПО' },
+      { l: 'Среда программирования Python', r: 'Инструментальное ПО' },
+      { l: 'Голосовой помощник', r: 'Искусственный интеллект' }
+    ]
+  },
+  {
+    id: 35, stage: 1, obj: 5, type: 'single',
+    q: 'Что такое искусственный интеллект?',
+    options: [
+      'Способность компьютера решать задачи, которые обычно требуют мышления человека',
+      'Очень быстрый процессор',
+      'Большой монитор',
+      'Компьютерная игра'
+    ],
+    answer: 'Способность компьютера решать задачи, которые обычно требуют мышления человека'
+  },
+
+  /* ================= ЭТАП 2 · ЦЕЛЬ 1: Эргономика (36–38) ================= */
+  {
+    id: 36, stage: 2, obj: 1, type: 'drag',
+    q: 'Распредели действия на две группы: что за компьютером делать МОЖНО, а что НЕЛЬЗЯ.',
+    categories: [
+      { name: '✅ Можно', items: ['Делать перерыв каждые 20 минут', 'Сидеть с прямой спиной', 'Ставить ноги на пол'] },
+      { name: '⛔ Нельзя', items: ['Есть пиццу за клавиатурой', 'Работать лёжа на диване', 'Ставить стакан сока на системный блок'] }
+    ]
+  },
+  {
+    id: 37, stage: 2, obj: 1, type: 'drag',
+    q: 'Распредели правила на группы: «Для глаз» и «Для спины и рук».',
+    categories: [
+      { name: '👀 Для глаз', items: ['Каждые 20 минут смотреть вдаль', 'Делать гимнастику для глаз', 'Не работать в полной темноте'] },
+      { name: '🖐️ Для спины и рук', items: ['Держать спину прямой', 'Класть локти на стол', 'Ставить ноги на пол'] }
+    ]
+  },
+  {
+    id: 38, stage: 2, obj: 1, type: 'single',
+    q: 'Ученик 2 часа подряд играл за компьютером и не сделал ни одного перерыва. Какое правило он нарушил?',
+    options: [
+      'Режим работы и отдыха за компьютером',
+      'Правила поиска в Интернете',
+      'Правила работы с файлами',
+      'Он ничего не нарушил'
+    ],
+    answer: 'Режим работы и отдыха за компьютером'
+  },
+
+  /* ================= ЭТАП 2 · ЦЕЛЬ 2: Виды информации и двоичный код (39–41) ================= */
+  {
+    id: 39, stage: 2, obj: 2, type: 'drag',
+    q: 'Распредели примеры по видам информации.',
+    categories: [
+      { name: '📝 Текстовая', items: ['Стихотворение', 'Объявление в газете'] },
+      { name: '🔢 Числовая', items: ['Пример 25 + 17', 'Счёт матча 3:1'] },
+      { name: '🖼️ Графическая', items: ['Фотография кота', 'Рисунок в Paint'] },
+      { name: '🎵 Звуковая', items: ['Песня в наушниках', 'Звонок будильника'] }
+    ]
+  },
+  {
+    id: 40, stage: 2, obj: 2, type: 'single',
+    q: 'Переведи двоичное число 110 в десятичную систему.',
+    options: ['6', '4', '3', '110'],
+    answer: '6'
+  },
+  {
+    id: 41, stage: 2, obj: 2, type: 'single',
+    q: 'Почему компьютер использует именно двоичный код?',
+    options: [
+      'Компьютеру удобно различать два состояния: есть сигнал и нет сигнала',
+      'Потому что у человека 10 пальцев',
+      'Потому что так запись короче',
+      'Потому что так красивее'
+    ],
+    answer: 'Компьютеру удобно различать два состояния: есть сигнал и нет сигнала'
+  },
+
+  /* ================= ЭТАП 2 · ЦЕЛЬ 3: Поисковые запросы (42–44) ================= */
+  {
+    id: 42, stage: 2, obj: 3, type: 'single',
+    q: 'Нужно найти схему созвездия Большая Медведица для урока. Какой запрос самый точный?',
+    options: [
+      'созвездие Большая Медведица схема для урока',
+      'звёзды',
+      'Большая Медведица',
+      'ночное небо картинки'
+    ],
+    answer: 'созвездие Большая Медведица схема для урока'
+  },
+  {
+    id: 43, stage: 2, obj: 3, type: 'drag',
+    q: 'Распредели поисковые запросы на две группы: «Точный запрос» и «Слишком общий запрос».',
+    categories: [
+      { name: '🎯 Точный запрос', items: ['рецепт блинов с молоком пошагово', 'погода в Алматы на завтра', 'строение клетки 5 класс биология'] },
+      { name: '🌫️ Слишком общий запрос', items: ['еда', 'погода', 'биология'] }
+    ]
+  },
+  {
+    id: 44, stage: 2, obj: 3, type: 'single',
+    q: 'Ты ввёл запрос и получил 2 000 000 результатов, но нужной информации нет. Что делать?',
+    options: [
+      'Уточнить запрос, добавив ключевые слова',
+      'Открыть все 2 000 000 ссылок',
+      'Выключить компьютер',
+      'Ждать, пока ответ появится сам'
+    ],
+    answer: 'Уточнить запрос, добавив ключевые слова'
+  },
+
+  /* ================= ЭТАП 2 · ЦЕЛЬ 4: История техники (45–47) ================= */
+  {
+    id: 45, stage: 2, obj: 4, type: 'drag',
+    q: 'Распредели устройства на группы: «Старинное» и «Современное».',
+    categories: [
+      { name: '🏺 Старинное', items: ['Абак', 'Счётные палочки', 'Механическая машина Бэббиджа'] },
+      { name: '💻 Современное', items: ['Ноутбук', 'Смартфон', 'Планшет'] }
+    ]
+  },
+  {
+    id: 46, stage: 2, obj: 4, type: 'single',
+    q: 'Что общего у первых ЭВМ и современных смартфонов?',
+    options: [
+      'Они выполняют вычисления по заданным программам',
+      'Они одинакового размера',
+      'Они работают без электричества',
+      'Они появились в одно и то же время'
+    ],
+    answer: 'Они выполняют вычисления по заданным программам'
+  },
+  {
+    id: 47, stage: 2, obj: 4, type: 'match',
+    q: 'Соотнеси изобретение и время его появления.',
+    pairs: [
+      { l: 'Абак', r: 'В древности' },
+      { l: 'Машина Бэббиджа', r: 'XIX век' },
+      { l: 'Первая ЭВМ ENIAC', r: 'Середина XX века' },
+      { l: 'Смартфон', r: 'XXI век' }
+    ]
+  },
+
+  /* ================= ЭТАП 2 · ЦЕЛЬ 5: ПО и ИИ (48–50) ================= */
+  {
+    id: 48, stage: 2, obj: 5, type: 'drag',
+    q: 'Распредели программы по видам программного обеспечения.',
+    categories: [
+      { name: '⚙️ Системное ПО', items: ['Windows', 'Драйвер принтера', 'Антивирус'] },
+      { name: '📄 Прикладное ПО', items: ['Word', 'Paint', 'Игра Minecraft'] },
+      { name: '🛠️ Инструментальное ПО', items: ['Среда программирования Python', 'Компилятор', 'Конструктор сайтов'] }
+    ]
+  },
+  {
+    id: 49, stage: 2, obj: 5, type: 'single',
+    q: 'Какая программа использует искусственный интеллект?',
+    options: [
+      'Чат-бот, который отвечает на вопросы',
+      'Обычный калькулятор',
+      'Блокнот',
+      'Проводник файлов'
+    ],
+    answer: 'Чат-бот, который отвечает на вопросы'
+  },
+  {
+    id: 50, stage: 2, obj: 5, type: 'single',
+    q: 'Ученик хочет создать свою компьютерную игру. Какое ПО ему понадобится?',
+    options: [
+      'Инструментальное ПО — среда разработки игр',
+      'Только калькулятор',
+      'Только антивирус',
+      'Никакое ПО не нужно'
+    ],
+    answer: 'Инструментальное ПО — среда разработки игр'
+  }
+];
+
+/* =========================================================
+   ДЕСКРИПТОРЫ ПО ЦЕЛЯМ ОБУЧЕНИЯ
+   ========================================================= */
+const OBJECTIVES = {
+  1: '5.4.1.1 — Соблюдение правил эргономики и безопасности за ПК',
+  2: '5.2.1.1 — Определение видов информации и понимание двоичного кода',
+  3: '5.3.3.1 — Составление точных поисковых запросов в сети Интернет',
+  4: '5.1.1.1 — Знание этапов истории развития вычислительной техники',
+  5: '5.1.1.2 — Классификация видов ПО и примеры применения ИИ'
+};
+
+const TYPE_NAMES = {
+  single: 'Один из многих',
+  tf: 'Верно / Неверно',
+  match: 'Соотнеси пары',
+  drag: 'Перетаскивание'
+};
+
+/* =========================================================
+   СОСТОЯНИЕ
+   ========================================================= */
+let state = {
+  name: '',
+  index: 0,
+  answers: {}
+};
+let selectedCard = null;
+
+/* =========================================================
+   ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+   ========================================================= */
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function checkAnswer(t, a) {
+  if (t.type === 'single' || t.type === 'tf') {
+    return a === t.answer;
+  }
+  if (t.type === 'match') {
+    if (!Array.isArray(a)) return false;
+    return t.pairs.every((p, i) => a[i] === p.r);
+  }
+  if (t.type === 'drag') {
+    if (!a || typeof a !== 'object') return false;
+    let total = 0;
+    for (const cat of t.categories) {
+      for (const item of cat.items) {
+        total++;
+        if (a[item] !== cat.name) return false;
+      }
+    }
+    return Object.keys(a).length === total;
+  }
+  return false;
+}
+
+function isAnswered(t) {
+  const a = state.answers[t.id];
+  if (t.type === 'single' || t.type === 'tf') return !!a;
+  if (t.type === 'match') {
+    return Array.isArray(a) && a.length === t.pairs.length && a.every(x => !!x);
+  }
+  if (t.type === 'drag') {
+    if (!a) return false;
+    const total = t.categories.reduce((s, c) => s + c.items.length, 0);
+    return Object.keys(a).length === total;
+  }
+  return false;
+}
+
+function updateNextBtn() {
+  const t = TASKS[state.index];
+  const btn = document.getElementById('nextBtn');
+  btn.disabled = !isAnswered(t);
+}
+
+/* =========================================================
+   ЭКРАН ВХОДА
+   ========================================================= */
+const nameInput = document.getElementById('studentName');
+const startBtn = document.getElementById('startBtn');
+const loginHint = document.getElementById('loginHint');
+
+nameInput.addEventListener('input', function () {
+  const val = nameInput.value.trim();
+  startBtn.disabled = val.length < 2;
+  loginHint.textContent = val.length < 2
+    ? 'Введи имя (не меньше 2 букв), чтобы начать'
+    : 'Отлично! Можно начинать 🚀';
+  loginHint.style.color = val.length < 2 ? '#7d8aa5' : '#16a34a';
+});
+
+startBtn.addEventListener('click', function () {
+  const val = nameInput.value.trim();
+  if (val.length < 2) {
+    loginHint.textContent = '⚠️ Сначала введи своё имя и фамилию!';
+    loginHint.style.color = '#dc2626';
+    return;
+  }
+  state.name = val;
+  state.index = 0;
+  state.answers = {};
+  showScreen('quizScreen');
+  renderTask();
+});
+
+/* =========================================================
+   РЕНДЕР ЗАДАНИЯ
+   ========================================================= */
+function renderTask() {
+  const t = TASKS[state.index];
+  selectedCard = null;
+
+  document.getElementById('counter').textContent = 'Задание ' + (state.index + 1) + ' из ' + TASKS.length;
+  document.getElementById('taskNum').textContent = 'Задание ' + (state.index + 1);
+  document.getElementById('stageBadge').textContent = t.stage === 1
+    ? 'ЭТАП 1 · Базовый 🌱'
+    : 'ЭТАП 2 · Продвинутый 🚀';
+  document.getElementById('progressBar').style.width = (state.index / TASKS.length * 100) + '%';
+
+  document.getElementById('taskType').textContent = TYPE_NAMES[t.type];
+  document.getElementById('taskQuestion').textContent = t.q;
+
+  // Кнопка «Далее»
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.textContent = (state.index === TASKS.length - 1) ? '🏁 Завершить работу' : 'Далее →';
+
+  // Тело задания
+  const body = document.getElementById('taskBody');
+  body.innerHTML = '';
+
+  if (t.type === 'single' || t.type === 'tf') buildChoice(t, body);
+  else if (t.type === 'match') buildMatch(t, body);
+  else if (t.type === 'drag') buildDrag(t, body);
+
+  updateNextBtn();
+}
+
+/* ---------- Тип: выбор одного ответа / верно-неверно ---------- */
+function buildChoice(t, body) {
+  let items;
+  if (t.type === 'tf') {
+    items = shuffle([
+      { val: 'Верно', label: '✔️ Верно' },
+      { val: 'Неверно', label: '❌ Неверно' }
+    ]);
+  } else {
+    items = shuffle(t.options).map(o => ({ val: o, label: o }));
+  }
+
+  const wrap = document.createElement('div');
+  wrap.className = 'options' + (t.type === 'tf' ? ' tf-options' : '');
+
+  const saved = state.answers[t.id];
+
+  items.forEach(function (item) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'option';
+    btn.textContent = item.label;
+    if (saved === item.val) btn.classList.add('selected');
+
+    btn.addEventListener('click', function () {
+      wrap.querySelectorAll('.option').forEach(x => x.classList.remove('selected'));
+      btn.classList.add('selected');
+      state.answers[t.id] = item.val;
+      updateNextBtn();
+    });
+
+    wrap.appendChild(btn);
+  });
+
+  body.appendChild(wrap);
+}
+
+/* ---------- Тип: сопоставление пар ---------- */
+function buildMatch(t, body) {
+  const rights = shuffle(t.pairs.map(p => p.r));
+  const saved = Array.isArray(state.answers[t.id]) ? state.answers[t.id] : [];
+
+  t.pairs.forEach(function (pair, i) {
+    const row = document.createElement('div');
+    row.className = 'match-row';
+
+    const left = document.createElement('div');
+    left.className = 'match-left';
+    left.textContent = pair.l;
+
+    const sel = document.createElement('select');
+    sel.className = 'match-select';
+    sel.add(new Option('— выбери —', ''));
+    rights.forEach(function (r) { sel.add(new Option(r, r)); });
+    sel.value = saved[i] || '';
+
+    sel.addEventListener('change', function () {
+      let arr = state.answers[t.id];
+      if (!Array.isArray(arr) || arr.length !== t.pairs.length) {
+        arr = new Array(t.pairs.length).fill(null);
+      }
+      arr[i] = sel.value || null;
+      state.answers[t.id] = arr;
+      updateNextBtn();
+    });
+
+    row.appendChild(left);
+    row.appendChild(sel);
+    body.appendChild(row);
+  });
+}
+
+/* ---------- Тип: перетаскивание в категории ---------- */
+function buildDrag(t, body) {
+  const caption = document.createElement('div');
+  caption.className = 'drag-caption';
+  caption.textContent = '🖱️ Перетащи карточки в нужную группу. Можно и так: нажми на карточку, а затем на группу.';
+  body.appendChild(caption);
+
+  const pool = document.createElement('div');
+  pool.className = 'drag-pool';
+  body.appendChild(pool);
+
+  const bucketsWrap = document.createElement('div');
+  bucketsWrap.className = 'buckets';
+  body.appendChild(bucketsWrap);
+
+  const cardMap = new Map();
+
+  function saveDrag() {
+    const res = {};
+    bucketsWrap.querySelectorAll('.bucket').forEach(function (b) {
+      b.querySelectorAll('.drag-card').forEach(function (c) {
+        res[c.dataset.item] = b.dataset.cat;
+      });
+    });
+    state.answers[t.id] = res;
+    updateNextBtn();
+  }
+
+  function makeCard(text) {
+    const c = document.createElement('div');
+    c.className = 'drag-card';
+    c.draggable = true;
+    c.dataset.item = text;
+    c.textContent = text;
+
+    c.addEventListener('dragstart', function (ev) {
+      ev.dataTransfer.setData('text/plain', text);
+      ev.dataTransfer.effectAllowed = 'move';
+      c.classList.add('dragging');
+    });
+    c.addEventListener('dragend', function () {
+      c.classList.remove('dragging');
+    });
+    c.addEventListener('click', function (ev) {
+      ev.stopPropagation();
+      if (selectedCard === c) {
+        c.classList.remove('sel');
+        selectedCard = null;
+        return;
+      }
+      if (selectedCard) selectedCard.classList.remove('sel');
+      selectedCard = c;
+      c.classList.add('sel');
+    });
+
+    cardMap.set(text, c);
+    return c;
+  }
+
+  // Создаём корзины
+  t.categories.forEach(function (cat) {
+    const bucket = document.createElement('div');
+    bucket.className = 'bucket';
+    bucket.dataset.cat = cat.name;
+
+    const title = document.createElement('div');
+    title.className = 'bucket-title';
+    title.textContent = cat.name;
+
+    const items = document.createElement('div');
+    items.className = 'bucket-items';
+
+    bucket.appendChild(title);
+    bucket.appendChild(items);
+
+    bucket.addEventListener('dragover', function (ev) {
+      ev.preventDefault();
+      bucket.classList.add('over');
+    });
+    bucket.addEventListener('dragleave', function () {
+      bucket.classList.remove('over');
+    });
+    bucket.addEventListener('drop', function (ev) {
+      ev.preventDefault();
+      bucket.classList.remove('over');
+      const text = ev.dataTransfer.getData('text/plain');
+      const card = cardMap.get(text);
+      if (card) {
+        items.appendChild(card);
+        saveDrag();
+      }
+    });
+    bucket.addEventListener('click', function () {
+      if (selectedCard) {
+        items.appendChild(selectedCard);
+        selectedCard.classList.remove('sel');
+        selectedCard = null;
+        saveDrag();
+      }
+    });
+
+    bucketsWrap.appendChild(bucket);
+  });
+
+  // Перемешиваем карточки и кладём в общий пул
+  const allItems = [];
+  t.categories.forEach(c => c.items.forEach(it => allItems.push(it)));
+  shuffle(allItems).forEach(function (text) {
+    pool.appendChild(makeCard(text));
+  });
+}
+
+/* =========================================================
+   КНОПКА «ДАЛЕЕ»
+   ========================================================= */
+document.getElementById('nextBtn').addEventListener('click', function () {
+  const t = TASKS[state.index];
+  if (!isAnswered(t)) return;
+
+  state.index++;
+
+  if (state.index === 35) {
+    // Завершён 1 этап
+    document.getElementById('progressBar').style.width = '70%';
+    showScreen('stageScreen');
+  } else if (state.index >= TASKS.length) {
+    finishWork();
+  } else {
+    renderTask();
+  }
+});
+
+document.getElementById('toStage2Btn').addEventListener('click', function () {
+  showScreen('quizScreen');
+  renderTask();
+});
+
+/* =========================================================
+   ФИНАЛЬНЫЙ ЭКРАН
+   ========================================================= */
+function finishWork() {
+  const objStats = {};
+  for (let i = 1; i <= 5; i++) objStats[i] = { correct: 0, total: 0 };
+
+  let correct1 = 0, correct2 = 0;
+
+  TASKS.forEach(function (t) {
+    const ok = checkAnswer(t, state.answers[t.id]);
+    objStats[t.obj].total++;
+    if (ok) {
+      objStats[t.obj].correct++;
+      if (t.stage === 1) correct1++; else correct2++;
+    }
+  });
+
+  const totalCorrect = correct1 + correct2;
+  const percent = Math.round(totalCorrect / TASKS.length * 100);
+
+  // Шкала: Этап 1 → до 8 баллов, Этап 2 → до 2 баллов
+  const rawScore = (8 * correct1 / 35) + (2 * correct2 / 15);
+  const score = Math.round(rawScore * 10) / 10;
+
+  document.getElementById('resName').textContent = '👤 ' + state.name;
+  document.getElementById('resScore').textContent = score.toFixed(1).replace('.', ',');
+  document.getElementById('resPercent').textContent = 'Правильных ответов: ' + percent + '%';
+  document.getElementById('resCount').textContent =
+    'Верно выполнено ' + totalCorrect + ' из ' + TASKS.length + ' заданий ' +
+    '(Этап 1: ' + correct1 + '/35 · Этап 2: ' + correct2 + '/15)';
+
+  // Таблица дескрипторов
+  const tbody = document.getElementById('descBody');
+  tbody.innerHTML = '';
+
+  for (let i = 1; i <= 5; i++) {
+    const st = objStats[i];
+    const p = st.total ? Math.round(st.correct / st.total * 100) : 0;
+
+    let level, cls;
+    if (p >= 80) { level = 'Высокий'; cls = 'lvl-high'; }
+    else if (p >= 50) { level = 'Средний'; cls = 'lvl-mid'; }
+    else { level = 'Низкий'; cls = 'lvl-low'; }
+
+    const tr = document.createElement('tr');
+
+    const td1 = document.createElement('td');
+    td1.textContent = OBJECTIVES[i];
+
+    const td2 = document.createElement('td');
+    td2.className = 'num';
+    td2.textContent = st.correct + ' / ' + st.total;
+
+    const td3 = document.createElement('td');
+    td3.className = 'num';
+    td3.textContent = p + '%';
+
+    const td4 = document.createElement('td');
+    td4.className = 'num';
+    const span = document.createElement('span');
+    span.className = 'lvl ' + cls;
+    span.textContent = level;
+    td4.appendChild(span);
+
+    tr.appendChild(td1);
+    tr.appendChild(td2);
+    tr.appendChild(td3);
+    tr.appendChild(td4);
+    tbody.appendChild(tr);
+  }
+
+  // Вердикт
+  let verdict;
+  if (score >= 9) {
+    verdict = '🌟 Превосходно! Ты отлично разбираешься в теме и умеешь искать информацию в Интернете.';
+  } else if (score >= 7.5) {
+    verdict = '👍 Хорошая работа! Ты усвоил тему, осталось закрепить несколько моментов.';
+  } else if (score >= 5.5) {
+    verdict = '🙂 Неплохо! Основы понятны, но стоит повторить материал и потренироваться ещё.';
+  } else {
+    verdict = '📚 Стоит ещё раз повторить тему вместе с учителем и пройти практикум заново.';
+  }
+  document.getElementById('verdict').textContent = verdict;
+
+  showScreen('resultScreen');
+}
+
+/* =========================================================
+   ПЕРЕЗАПУСК
+   ========================================================= */
+document.getElementById('restartBtn').addEventListener('click', function () {
+  state = { name: '', index: 0, answers: {} };
+  nameInput.value = '';
+  startBtn.disabled = true;
+  loginHint.textContent = 'Без имени работа не начнётся';
+  loginHint.style.color = '#7d8aa5';
+  selectedCard = null;
+  showScreen('loginScreen');
+});
+</script>
+</body>
+</html>
